@@ -13,19 +13,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install toolchain
+      - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y             build-essential             binutils             nasm
+          sudo apt-get install -y             build-essential             binutils             nasm             xorriso             qemu-system-x86             autoconf             automake             mtools
+
+      - name: Build Limine
+        run: |
+          git clone --depth 1 --branch v12.x https://github.com/Limine-Bootloader/Limine.git build/limine
+          cd build/limine
+          ./bootstrap
+          ./configure --enable-bios --enable-bios-cd --enable-uefi-x86-64 --enable-uefi-cd
+          make
 
       - name: Build kernel
         run: make -C build
 
-      - name: Verify kernel
-        run: file build/nadiros.elf
+      - name: Build bootable ISO
+        run: make -C build iso
 
       - name: Upload kernel
         uses: actions/upload-artifact@v4
         with:
           name: nadiros-kernel
           path: build/nadiros.elf
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: nadiros-iso
+          path: build/nadiros.iso
