@@ -1,0 +1,15 @@
+# Build output
+/build/out/
+/build/*.iso
+/build/*.img
+/build/*.bin
+/build/*.elf
+
+# Tool/editor files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
