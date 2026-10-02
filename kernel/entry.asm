@@ -1,0 +1,18 @@
+global kmain
+extern kernel_main
+
+section .text.entry
+kmain:
+    cli
+    mov rsp, stack_top
+    call kernel_main
+
+.hang:
+    hlt
+    jmp .hang
+
+section .bss
+align 16
+stack_bottom:
+    resb 16384
+stack_top:
