@@ -45,15 +45,22 @@ jobs:
       - name: Boot ISO in QEMU
         run: |
           set +e
-          timeout 10s qemu-system-x86_64             -cdrom build/nadiros.iso             -display none             -monitor none             -debugcon qemu-debug.log             -global isa-debugcon.iobase=0xe9
+          timeout 10s qemu-system-x86_64 \
+            -cdrom build/nadiros.iso \
+            -display none \
+            -monitor none \
+            -debugcon file:qemu-debug.log \
+            -global isa-debugcon.iobase=0xe9
           status=$?
           echo "QEMU exit status: $status"
           cat qemu-debug.log || true
-          grep -F "nadirOS kernel initialized." qemu-debug.log
-          if [ $? -ne 0 ]; then
+
+          if ! grep -Fq "nadirOS kernel initialized." qemu-debug.log; then
             echo "nadirOS did not reach kernel_main."
             exit 1
           fi
+
+          echo "nadirOS reached kernel_main successfully."
 
       - name: Upload kernel
         uses: actions/upload-artifact@v4
