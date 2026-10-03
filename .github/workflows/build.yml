@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -20,6 +20,7 @@ jobs:
             build-essential \
             binutils \
             lld \
+            llvm \
             nasm \
             xorriso \
             qemu-system-x86 \
@@ -29,17 +30,38 @@ jobs:
 
       - name: Build Limine
         run: |
-          git clone --depth 1 --branch v12.x https://github.com/Limine-Bootloader/Limine.git build/limine
+          git clone --depth 1 --branch v12.9.1 https://github.com/Limine-Bootloader/Limine.git build/limine
           cd build/limine
           ./bootstrap
           ./configure --enable-bios --enable-bios-cd --enable-uefi-x86-64 --enable-uefi-cd
           make
+          ./bin/limine --version
 
       - name: Build kernel
         run: make -C build
 
       - name: Build bootable ISO
         run: make -C build iso
+
+      - name: Boot ISO in QEMU
+        run: |
+          set +e
+          timeout 10s qemu-system-x86_64 \
+            -cdrom build/nadiros.iso \
+            -display none \
+            -monitor none \
+            -debugcon file:qemu-debug.log \
+            -global isa-debugcon.iobase=0xe9
+          status=$?
+          echo "QEMU exit status: $status"
+          cat qemu-debug.log || true
+
+          if ! grep -Fq "nadirOS kernel initialized." qemu-debug.log; then
+            echo "nadirOS did not reach kernel_main."
+            exit 1
+          fi
+
+          echo "nadirOS reached kernel_main successfully."
 
       - name: Upload kernel
         uses: actions/upload-artifact@v4
