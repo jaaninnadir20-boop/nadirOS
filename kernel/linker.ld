@@ -23,6 +23,14 @@ SECTIONS
         *(.data*)
     }
 
+    /* Keep Limine protocol metadata inside the loaded image. */
+    .limine_requests : ALIGN(8)
+    {
+        KEEP(*(.limine_requests_start))
+        KEEP(*(.limine_requests))
+        KEEP(*(.limine_requests_end))
+    }
+
     .bss : ALIGN(4096)
     {
         *(COMMON)
