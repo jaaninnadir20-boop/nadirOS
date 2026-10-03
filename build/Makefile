@@ -31,6 +31,7 @@ iso: $(KERNEL)
 	cp $(ROOT)/boot/limine.conf $(ISO_ROOT)/limine.conf
 	cp $(LIMINE_DIR)/bin/limine-bios-cd.bin $(ISO_ROOT)/boot/limine-bios-cd.bin
 	cp $(LIMINE_DIR)/bin/limine-uefi-cd.bin $(ISO_ROOT)/boot/limine-uefi-cd.bin
+	cp $(LIMINE_DIR)/bin/limine-bios.sys $(ISO_ROOT)/boot/limine-bios.sys
 	xorriso -as mkisofs \
 		-b boot/limine-bios-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
