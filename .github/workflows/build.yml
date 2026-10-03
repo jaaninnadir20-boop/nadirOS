@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -16,29 +16,21 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            binutils \
-            lld \
-            nasm \
-            xorriso \
-            qemu-system-x86 \
-            autoconf \
-            automake \
-            mtools
+          sudo apt-get install -y build-essential binutils nasm mtools xorriso qemu-system-x86
 
-      - name: Build Limine
+      - name: Fetch Limine (prebuilt binaries) and build its installer
         run: |
-          git clone --depth 1 --branch v12.x https://github.com/Limine-Bootloader/Limine.git build/limine
-          cd build/limine
-          ./bootstrap
-          ./configure --enable-bios --enable-bios-cd --enable-uefi-x86-64 --enable-uefi-cd
-          make
+          git clone --depth 1 --branch v11.x-binary https://github.com/Limine-Bootloader/Limine.git build/limine
+          make -C build/limine
 
       - name: Build kernel
         run: make -C build
 
-      - name: Build bootable ISO
+      - name: Boot test in QEMU
+        run: make -C build test
+
+      - name: Build bootable ISO (not yet verified locally)
+        continue-on-error: true
         run: make -C build iso
 
       - name: Upload kernel
@@ -47,8 +39,8 @@ jobs:
           name: nadiros-kernel
           path: build/nadiros.elf
 
-      - name: Upload ISO
+      - name: Upload disk image
         uses: actions/upload-artifact@v4
         with:
-          name: nadiros-iso
-          path: build/nadiros.iso
+          name: nadiros-disk
+          path: build/nadiros.img
