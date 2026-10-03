@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -30,11 +30,12 @@ jobs:
 
       - name: Build Limine
         run: |
-          git clone --depth 1 --branch v12.x https://github.com/Limine-Bootloader/Limine.git build/limine
+          git clone --depth 1 --branch v12.9.1 https://github.com/Limine-Bootloader/Limine.git build/limine
           cd build/limine
           ./bootstrap
           ./configure --enable-bios --enable-bios-cd --enable-uefi-x86-64 --enable-uefi-cd
           make
+          ./bin/limine --version
 
       - name: Build kernel
         run: make -C build
