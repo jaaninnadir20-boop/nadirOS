@@ -5,7 +5,7 @@ AS := nasm
 LIMINE_DIR ?= limine
 QEMU ?= qemu-system-x86_64
 
-CFLAGS := -std=c11 -ffreestanding -fno-pie -fno-stack-protector -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -mcmodel=small -Wall -Wextra -O2
+CFLAGS := -std=c11 -ffreestanding -I$(ROOT)/kernel -fno-pie -fno-stack-protector -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -mcmodel=small -Wall -Wextra -O2
 LDFLAGS := -nostdlib -static -z max-page-size=0x1000
 
 ROOT := ..
