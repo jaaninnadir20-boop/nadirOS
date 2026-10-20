@@ -34,3 +34,7 @@ The first milestone is intentionally small: produce a bootable kernel image and 
 - `build/` — build scripts and generated artifacts
 - `docs/` — architecture and development documentation
 - `config/` — boot and project configuration
+
+## CI
+
+Every push and pull request builds the kernel and packages a bootable ISO.
