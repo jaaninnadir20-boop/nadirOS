@@ -30,6 +30,14 @@ jobs:
 
       - name: Build Limine
         run: |
+          OBJCOPY_FOR_TARGET="$(command -v llvm-objcopy || find /usr/bin -maxdepth 1 -name 'llvm-objcopy-[0-9]*' -executable -print -quit)"
+          if [ -z "$OBJCOPY_FOR_TARGET" ]; then
+            echo "Could not find llvm-objcopy or a versioned llvm-objcopy binary."
+            exit 1
+          fi
+          export OBJCOPY_FOR_TARGET
+          echo "Using OBJCOPY_FOR_TARGET=$OBJCOPY_FOR_TARGET"
+
           git clone --depth 1 --branch v12.9.1 https://github.com/Limine-Bootloader/Limine.git build/limine
           cd build/limine
           ./bootstrap
